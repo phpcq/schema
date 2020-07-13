@@ -1,182 +1,281 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "https://phpcq.github.io/schema/v1/repository-schema.json#",
+  "$id": "https://phpcq.github.io/schema/v1/repository-schema.json",
   "title": "phpcq repository schema",
-  "$ref": "#/definitions/Repository",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "#/definitions/Repository"
+    }
+  ],
   "definitions": {
     "Repository": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "bootstraps": {
-          "$ref": "#/definitions/BootstrapList"
+        "includes": {
+          "$ref": "#/definitions/RepositoryIncludes"
         },
-        "phars": {
-          "$ref": "#/definitions/PharProgramList"
+        "plugins": {
+          "$ref": "#/definitions/RepositoryPluginList"
+        },
+        "tools": {
+          "$ref": "#/definitions/RepositoryToolList"
         }
-      },
-      "required": ["phars"]
-    },
-    "BootstrapList": {
-      "type": "object",
-      "patternProperties": {
-        "^[a-zA-Z0-9-]*$": {
-          "description": "Name of a bootstrap file.",
-          "oneOf": [
-            {
-              "$comment": "An inline bootstrap file.",
-              "$ref": "#/definitions/BootstrapTypeInline"
-            },
-            {
-              "$comment": "A bootstrap file.",
-              "$ref": "#/definitions/BootstrapTypeFile"
-            }
-          ]
-        }
-      },
-      "additionalProperties": false
-    },
-    "BootstrapType": {
-      "oneOf": [
-        {
-          "$comment": "An inline bootstrap file.",
-          "$ref": "#/definitions/BootstrapTypeInline"
-        },
-        {
-          "$comment": "A bootstrap file.",
-          "$ref": "#/definitions/BootstrapTypeFile"
-        },
-        {
-          "type": "string",
-          "$comment": "name of a bootstrap in /bootstrap"
-        }
-      ]
-    },
-    "BootstrapTypeInline": {
-      "$comment": "An inline bootstrap file.",
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "inline"
-        },
-        "code": {
-          "$comment": "The PHP code of the bootstrap.",
-          "type": "string",
-          "contentMediaType": "application/x-php"
-        },
-        "plugin-version": {
-          "$comment": "Version of the plugin contained",
-          "type": "string"
-        }
-      },
-      "required": ["type", "code", "plugin-version"],
-      "additionalProperties": false
-    },
-    "BootstrapTypeFile": {
-      "$comment": "A bootstrap file.",
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "file"
-        },
-        "url": {
-          "$comment": "URL of a bootstrap file",
-          "type": "string",
-          "format": "iri-reference"
-        },
-        "plugin-version": {
-          "$comment": "Version of the plugin contained",
-          "type": "string",
-          "pattern": "^v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?$"
-        }
-      },
-      "required": ["type", "url", "plugin-version"],
-      "additionalProperties": false
-    },
-    "PharProgramList": {
-      "type": "object",
-      "patternProperties": {
-        "^[a-zA-Z0-9-]*$": {
-          "description": "The list of contained phar program sources.",
-          "$ref": "#/definitions/PharProgramSource"
-        }
-      },
-      "additionalProperties": false
-    },
-    "PharProgramSource": {
-      "description": "A program source may be either an IRI to an version include file or a program version list",
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "url": {
-              "$comment": "URL of an repository include file",
-              "type": "string",
-              "format": "iri-reference"
-            },
-            "checksum": {
-              "$ref": "#/definitions/HashChecksum"
-            }
-          }
-        },
-        {
-          "$ref": "#/definitions/PharProgramVersionList"
-        }
-      ]
-    },
-    "PharProgramVersionList": {
-      "$comment": "Definition of a phar program and it's sources",
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/PharProgramVersion"
       }
     },
-    "PharProgramVersion": {
-      "$comment": "Definition of a phar program version and it's requirements",
+    "RepositoryIncludes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/RepositoryInclude"
+      }
+    },
+    "RepositoryInclude": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "version": {
-          "type": "string",
-          "pattern": "^v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?$"
-        },
-        "phar-url": {
-          "$comment": "URL to the .phar file",
+        "url": {
+          "$comment": "URL of an include file",
           "type": "string",
           "format": "iri-reference"
         },
-        "bootstrap": {
-          "$ref": "#/definitions/BootstrapType"
+        "checksum": {
+          "$ref": "#/definitions/HashChecksum"
+        }
+      }
+    },
+    "RepositoryPluginList": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z0-9-]*$": {
+          "description": "List of versions per plugin.",
+          "$ref": "#/definitions/RepositoryPluginVersionList"
+        }
+      }
+    },
+    "RepositoryPluginVersionList": {
+      "$comment": "Definition of plugin versions",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/RepositoryPluginVersionListItem"
+      }
+    },
+    "RepositoryPluginVersionListItem": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/RepositoryPluginVersionListItemInline"
+        },
+        {
+          "$ref": "#/definitions/RepositoryPluginVersionListItemExternal"
+        }
+      ]
+    },
+    "RepositoryPluginVersionListItemExternal": {
+      "$comment": "Definition of a downloadable plugin version and it's requirements",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "php-file"
+        },
+        "api-version": {
+          "$comment": "API version used in this plugin",
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "version": {
+          "$comment": "Version of the plugin",
+          "$ref": "#/definitions/VersionExpression"
         },
         "requirements": {
-          "$ref": "#/definitions/PharPlatformRequirements"
+          "$ref": "#/definitions/RepositoryPluginVersionListItemRequirements"
         },
-        "hash": {
+        "url": {
+          "$comment": "URL to the plugin file",
+          "type": "string",
+          "format": "iri-reference"
+        },
+        "checksum": {
           "$ref": "#/definitions/HashChecksum"
         },
         "signature": {
-          "$comment": "URL to the .phar.asc file",
+          "$comment": "URL to the .asc file",
           "type": "string",
           "format": "iri-reference"
         }
       },
-      "required": ["version", "phar-url", "bootstrap", "requirements"],
-      "additionalProperties": false
+      "required": [
+        "type",
+        "api-version",
+        "version",
+        "requirements",
+        "url"
+      ]
     },
-    "PharPlatformRequirements": {
+    "RepositoryPluginVersionListItemInline": {
+      "$comment": "Definition of an inline plugin version and its requirements",
       "type": "object",
-      "patternProperties": {
-        "^(php|ext-[a-z0-9-]*)$": {
-          "description": "The list of platform requirements for phar programs.",
-          "$ref": "#/definitions/VersionConstraint"
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "php-inline"
+        },
+        "api-version": {
+          "$comment": "API version used in this plugin",
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "version": {
+          "$comment": "Version of the plugin",
+          "type": "string",
+          "$ref": "#/definitions/VersionExpression"
+        },
+        "requirements": {
+          "$ref": "#/definitions/RepositoryPluginVersionListItemRequirements"
+        },
+        "code": {
+          "type": "string"
         }
       },
-      "additionalProperties": false
+      "required": [
+        "type",
+        "api-version",
+        "version",
+        "requirements",
+        "code"
+      ]
+    },
+    "RepositoryPluginVersionListItemRequirements":{
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "php": {
+          "$ref": "#/definitions/PhpPlatformRequirements"
+        },
+        "tool": {
+          "$ref": "#/definitions/ToolRequirements"
+        },
+        "plugin": {
+          "$ref": "#/definitions/PluginRequirements"
+        },
+        "composer": {
+          "$ref": "#/definitions/ComposerRequirements"
+        }
+      }
+    },
+    "PhpPlatformRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(php|ext-[a-z0-9-]*)$": {
+          "description": "Map of named php platform requirements.",
+          "$ref": "#/definitions/VersionConstraint"
+        }
+      }
+    },
+    "ToolRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z0-9-]*$": {
+          "description": "A list of named tool requirements.",
+          "$ref": "#/definitions/VersionConstraint"
+        }
+      }
+    },
+    "PluginRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z0-9-]*$": {
+          "description": "A list of named plugin requirements.",
+          "$ref": "#/definitions/VersionConstraint"
+        }
+      }
+    },
+    "ComposerRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z0-9-]*/[a-zA-Z0-9-]*$": {
+          "description": "A list of named composer requirements.",
+          "$ref": "#/definitions/VersionConstraint"
+        }
+      }
+    },
+    "RepositoryToolList": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z0-9-]*$": {
+          "description": "List of versions per plugin.",
+          "$ref": "#/definitions/RepositoryToolVersionList"
+        }
+      }
+    },
+    "RepositoryToolVersionList": {
+      "$comment": "Definition of tool versions",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/RepositoryToolVersionListItem"
+      }
+    },
+    "RepositoryToolVersionListItem": {
+      "$comment": "Definition of a tool version and it's requirements",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "$comment": "Version of the plugin",
+          "$ref": "#/definitions/VersionExpression"
+        },
+        "requirements": {
+          "$ref": "#/definitions/RepositoryToolVersionListItemRequirements"
+        },
+        "url": {
+          "$comment": "URL to the plugin file",
+          "type": "string",
+          "format": "iri-reference"
+        },
+        "checksum": {
+          "$ref": "#/definitions/HashChecksum"
+        },
+        "signature": {
+          "$comment": "URL to the .asc file",
+          "type": "string",
+          "format": "iri-reference"
+        }
+      },
+      "required": [
+        "version",
+        "requirements",
+        "url"
+      ]
+    },
+    "RepositoryToolVersionListItemRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "php": {
+          "$ref": "#/definitions/PhpPlatformRequirements"
+        },
+        "composer": {
+          "$ref": "#/definitions/ComposerRequirements"
+        }
+      }
+    },
+    "VersionExpression": {
+      "type": "string",
+      "pattern": "^v?(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*)?)?([.-]?dev)?(?:\\+[^\\s]+)?$"
     },
     "VersionConstraint": {
       "oneOf": [
         {
           "$comment": "Allow multiple constraints chained by OR. ie. ^1.0.0( || ^2.0.0)?",
-          "pattern": "^(\\^|>=?)v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?(\\s?\\|\\|\\s(\\^|>=?)v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?)*$"
+          "pattern": "^(\\^|>=?)v?(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*)?)?([.-]?dev)?(?:\\+[^\\s]+)?(\\s?\\|\\|\\s(\\^|>=?)v?(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*)?)?([.-]?dev)?(?:\\+[^\\s]+)?)*$"
         },
         {
           "$comment": "Unrestricted boundaries.",
@@ -187,65 +286,89 @@
     "HashChecksum": {
       "oneOf": [
         {
-          "$comment": "SHA 1",
-          "type": "object",
-          "properties": {
-            "type": {
-              "const": "sha-1"
-            },
-            "value": {
-              "type": "string",
-              "pattern": "^[a-z0-9]{40}$"
-            }
-          },
-          "required": ["type", "value"],
-          "additionalProperties": false
-        },
-     {
-          "$comment": "SHA 256",
-          "type": "object",
-          "properties": {
-            "type": {
-              "const": "sha-256"
-            },
-            "value": {
-              "type": "string",
-              "pattern": "^[a-z0-9]{64}$"
-            }
-          },
-          "required": ["type", "value"],
-          "additionalProperties": false
+          "$ref": "#/definitions/HashChecksumSHA1"
         },
         {
-          "$comment": "SHA 384",
-          "type": "object",
-          "properties": {
-            "type": {
-              "const": "sha-384"
-            },
-            "value": {
-              "type": "string",
-              "pattern": "^[a-z0-9]{96}$"
-            }
-          },
-          "required": ["type", "value"],
-          "additionalProperties": false
+          "$ref": "#/definitions/HashChecksumSHA256"
         },
         {
-          "$comment": "SHA 512",
-          "type": "object",
-          "properties": {
-            "type": {
-              "const": "sha-512"
-            },
-            "value": {
-              "type": "string",
-              "pattern": "^[a-z0-9]{128}$"
-            }
-          },
-          "required": ["type", "value"],
-          "additionalProperties": false
+          "$ref": "#/definitions/HashChecksumSHA384"
+        },
+        {
+          "$ref": "#/definitions/HashChecksumSHA512"
         }
+      ]
+    },
+    "HashChecksumSHA1": {
+      "$comment": "SHA 1",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "sha-1"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[a-z0-9]{40}$"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ]
+    },
+    "HashChecksumSHA256": {
+      "$comment": "SHA 256",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "sha-256"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[a-z0-9]{64}$"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ]
+    },
+    "HashChecksumSHA384": {
+      "$comment": "SHA 384",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "sha-384"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[a-z0-9]{96}$"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ]
+    },
+    "HashChecksumSHA512": {
+      "$comment": "SHA 512",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "sha-512"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[a-z0-9]{128}$"
+        }
+      },
+      "required": [
+        "type",
+        "value"
       ]
     }
   }
