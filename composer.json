@@ -1,0 +1,19 @@
+{
+  "name": "phpcq/schema",
+  "description": "phpcq schema files",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Christian Schiffler",
+      "email": "c.schiffler@cyberspectrum.de",
+      "homepage": "http://cyberspectrum.de",
+      "role": "lead"
+    },
+    {
+      "name": "David Molineus",
+      "email": "david.molineus@netzmacht.de",
+      "homepage": "https://netzmacht.de",
+      "role": "lead"
+    }
+  ]
+}
