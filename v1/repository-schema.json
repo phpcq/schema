@@ -42,7 +42,11 @@
         "checksum": {
           "$ref": "#/definitions/HashChecksum"
         }
-      }
+      },
+      "required": [
+        "url",
+        "checksum"
+      ]
     },
     "RepositoryPluginList": {
       "type": "object",
@@ -111,7 +115,8 @@
         "api-version",
         "version",
         "requirements",
-        "url"
+        "url",
+        "checksum"
       ]
     },
     "RepositoryPluginVersionListItemInline": {
