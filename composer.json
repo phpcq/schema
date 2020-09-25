@@ -15,5 +15,10 @@
       "homepage": "https://netzmacht.de",
       "role": "lead"
     }
-  ]
+  ],
+  "extra": {
+    "branch-alias": {
+      "dev-gh-pages": "1.x-dev"
+    }
+  }
 }
