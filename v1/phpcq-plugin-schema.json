@@ -33,18 +33,35 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "php": {
+              "$ref": "#/definitions/PhpPlatformRequirements"
+            },
             "tool": {
-              "$ref": "#/definitions/ToolRequirement"
+              "$ref": "#/definitions/ToolRequirements"
             },
             "plugin": {
-              "$ref": "#/definitions/PluginRequirement"
+              "$ref": "#/definitions/PluginRequirements"
+            },
+            "composer": {
+              "$ref": "#/definitions/ComposerRequirements"
             }
           }
         }
       }
     },
-    "ToolRequirement": {
+    "PhpPlatformRequirements": {
       "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(php|ext-[a-z0-9-]*)$": {
+          "description": "Map of named php platform requirements.",
+          "$ref": "#/definitions/VersionConstraint"
+        }
+      }
+    },
+    "ToolRequirements": {
+      "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         "^[a-zA-Z0-9-]*$": {
           "type": "object",
@@ -69,8 +86,9 @@
         }
       }
     },
-    "PluginRequirement": {
+    "PluginRequirements": {
       "type": "object",
+      "additionalProperties": false,
       "patternProperties": {
         "^[a-zA-Z0-9-]*$": {
           "type": "object",
@@ -92,6 +110,16 @@
               }
             }
           }
+        }
+      }
+    },
+    "ComposerRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z0-9-]*/[a-zA-Z0-9-]*$": {
+          "description": "A list of named composer requirements.",
+          "$ref": "#/definitions/VersionConstraint"
         }
       }
     },
