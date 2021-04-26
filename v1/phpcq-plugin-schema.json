@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://phpcq.github.io/schema/v1/phpcq-plugin-schema.json",
+  "title": "phpcq repository schema",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "#/definitions/Plugin"
+    }
+  ],
+  "definitions": {
+    "Plugin": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["plain", "phar"]
+        },
+        "file": {
+          "type": "string"
+        },
+        "plugin-version": {
+          "type": "string"
+        },
+        "requirements": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tool": {
+              "$ref": "#/definitions/ToolRequirement"
+            },
+            "plugin": {
+              "$ref": "#/definitions/PluginRequirement"
+            }
+          }
+        }
+      }
+    },
+    "ToolRequirement": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9-]*$": {
+          "type": "object",
+          "properties": {
+            "constraints": {
+              "$ref": "#/definitions/VersionConstraint"
+            },
+            "source": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["github"]
+                },
+                "repository": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "PluginRequirement": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9-]*$": {
+          "type": "object",
+          "properties": {
+            "constraints": {
+              "$ref": "#/definitions/VersionConstraint"
+            },
+            "source": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["github"]
+                },
+                "repository": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "VersionConstraint": {
+      "oneOf": [
+        {
+          "$comment": "Allow multiple constraints chained by OR. ie. ^1.0.0( || ^2.0.0)?",
+          "pattern": "^(\\^|>=?)v?(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*)?)?([.-]?dev)?(?:\\+[^\\s]+)?(\\s?\\|\\|\\s(\\^|>=?)v?(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*)?)?([.-]?dev)?(?:\\+[^\\s]+)?)*$"
+        },
+        {
+          "$comment": "Unrestricted boundaries.",
+          "const": "*"
+        }
+      ]
+    }
+  }
+}
