@@ -18,13 +18,16 @@
         },
         "type": {
           "type": "string",
-          "enum": ["plain", "phar"]
+          "enum": ["php-file", "phar"]
         },
-        "file": {
-          "type": "string"
+        "url": {
+          "$comment": "URL to the plugin file",
+          "type": "string",
+          "format": "iri-reference"
         },
         "plugin-version": {
-          "type": "string"
+          "$comment": "Version of the plugin",
+          "$ref": "#/definitions/VersionExpression"
         },
         "requirements": {
           "type": "object",
@@ -91,6 +94,10 @@
           }
         }
       }
+    },
+    "VersionExpression": {
+      "type": "string",
+      "pattern": "^v?(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*)?)?([.-]?dev)?(?:\\+[^\\s]+)?$"
     },
     "VersionConstraint": {
       "oneOf": [
