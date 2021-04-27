@@ -69,17 +69,11 @@
             "constraints": {
               "$ref": "#/definitions/VersionConstraint"
             },
-            "source": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "enum": ["github"]
-                },
-                "repository": {
-                  "type": "string"
-                }
+            "sources": {
+              "$comment": "Definition of tool versions",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ToolSource"
               }
             }
           }
@@ -96,17 +90,11 @@
             "constraints": {
               "$ref": "#/definitions/VersionConstraint"
             },
-            "source": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "enum": ["github"]
-                },
-                "repository": {
-                  "type": "string"
-                }
+            "sources": {
+              "$comment": "Definition of plugin versions",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PluginSource"
               }
             }
           }
@@ -138,6 +126,75 @@
           "const": "*"
         }
       ]
+    },
+    "ToolSource": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/ToolSourceGithub"
+        },
+        {
+          "$ref": "#/definitions/ToolSourcePharIo"
+        }
+      ]
+    },
+    "ToolSourceGithub": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "github"
+        },
+        "allowed-versions": {
+          "$ref": "#/definitions/VersionConstraint"
+        },
+        "repository": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "repository"]
+    },
+    "ToolSourcePharIo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "phar.io"
+        },
+        "allowed-versions": {
+          "$ref": "#/definitions/VersionConstraint"
+        },
+        "url": {
+          "type": "string",
+          "format": "iri-reference"
+        }
+      },
+      "required": ["type", "url"]
+    },
+    "PluginSource": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/PluginSourceGithub"
+        }
+      ]
+    },
+    "PluginSourceGithub": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "github"
+        },
+        "allowed-versions": {
+          "$ref": "#/definitions/VersionConstraint"
+        },
+        "repository": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "repository"]
     }
   }
 }
