@@ -91,7 +91,7 @@
               "$ref": "#/definitions/VersionConstraint"
             },
             "sources": {
-              "$comment": "Definition of tool versions",
+              "$comment": "Definition of plugin versions",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/PluginSource"
