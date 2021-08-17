@@ -52,7 +52,8 @@
             }
           }
         }
-      }
+      },
+      "required": ["name", "type", "url", "api-version"]
     },
     "PhpPlatformRequirements": {
       "type": "object",
@@ -81,7 +82,8 @@
                 "$ref": "#/definitions/ToolSource"
               }
             }
-          }
+          },
+          "required": ["constraints", "sources"]
         }
       }
     },
@@ -102,7 +104,8 @@
                 "$ref": "#/definitions/PluginSource"
               }
             }
-          }
+          },
+          "required": ["constraints", "sources"]
         }
       }
     },
