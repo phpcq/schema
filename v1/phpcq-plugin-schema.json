@@ -25,6 +25,11 @@
           "type": "string",
           "format": "iri-reference"
         },
+        "signature": {
+          "$comment": "URL to the plugin signature file",
+          "type": "string",
+          "format": "iri-reference"
+        },
         "api-version": {
           "$comment": "API Version of the plugin",
           "$ref": "#/definitions/VersionExpression"
