@@ -30,7 +30,7 @@
           },
           "requirements": {
             "type": "object",
-            "description": "Abhängigkeiten der Version",
+            "description": "Requirements of the version",
             "properties": {
               "php": {
                 "type": "string",
