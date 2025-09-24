@@ -29,21 +29,7 @@
             "description": "File path of the signature file relative to the versions.json"
           },
           "requirements": {
-            "type": "object",
-            "description": "Requirements of the version",
-            "properties": {
-              "php": {
-                "type": "string",
-                "description": "PHP requirement"
-              }
-            },
-            "patternProperties": {
-              "^ext-[a-zA-Z0-9_-]+$": {
-                "type": "string",
-                "description": "PHP extension requirement"
-              }
-            },
-            "additionalProperties": true
+            "$ref": "#/definitions/PhpPlatformRequirements"
           }
         },
         "required": ["version", "phar", "signature", "requirements"],
@@ -52,5 +38,29 @@
     }
   },
   "required": ["updated", "versions"],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "definitions": {
+    "PhpPlatformRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(php(-.+)?|ext-[a-z0-9]+|lib-[a-z0-9]+)$": {
+          "description": "Map of named php platform requirements.",
+          "$ref": "#/definitions/VersionConstraint"
+        }
+      }
+    },
+    "VersionConstraint": {
+      "oneOf": [
+        {
+          "$comment": "Allow multiple constraints chained by OR. ie. ^1.0.0( || ^2.0.0)?",
+          "pattern": "^(\\^|>=?)v?(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*)?)?([.-]?dev)?(?:\\+[^\\s]+)?(\\s?\\|\\|\\s(\\^|>=?)v?(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*)?)?([.-]?dev)?(?:\\+[^\\s]+)?)*$"
+        },
+        {
+          "$comment": "Unrestricted boundaries.",
+          "const": "*"
+        }
+      ]
+    }
+  }
 }
