@@ -134,7 +134,7 @@
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {
-        "^(php|ext-[a-z0-9-]*)$": {
+        "^(php(-.+)?|ext-[a-z0-9]+|lib-[a-z0-9]+)$": {
           "description": "Map of named php platform requirements.",
           "$ref": "#/definitions/VersionConstraint"
         }

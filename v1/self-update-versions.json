@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/versions-schema.json",
+  "title": "Versions Schema",
+  "description": "Schema for versions list for PHPCQ self-update",
+  "type": "object",
+  "properties": {
+    "updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the last update"
+    },
+    "versions": {
+      "type": "array",
+      "description": "List of available versions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Version number following the semver standard"
+          },
+          "phar": {
+            "type": "string",
+            "description": "File path of the phar file relative to the versions.json"
+          },
+          "signature": {
+            "type": [ "string", "null" ],
+            "description": "File path of the signature file relative to the versions.json"
+          },
+          "requirements": {
+            "$ref": "#/definitions/PhpPlatformRequirements"
+          }
+        },
+        "required": ["version", "phar", "signature", "requirements"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["updated", "versions"],
+  "additionalProperties": false,
+  "definitions": {
+    "PhpPlatformRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(php(-.+)?|ext-[a-z0-9]+|lib-[a-z0-9]+)$": {
+          "description": "Map of named php platform requirements.",
+          "$ref": "#/definitions/VersionConstraint"
+        }
+      }
+    },
+    "VersionConstraint": {
+      "oneOf": [
+        {
+          "$comment": "Allow multiple constraints chained by OR. ie. ^1.0.0( || ^2.0.0)?",
+          "pattern": "^(\\^|>=?)v?(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*)?)?([.-]?dev)?(?:\\+[^\\s]+)?(\\s?\\|\\|\\s(\\^|>=?)v?(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*)?)?([.-]?dev)?(?:\\+[^\\s]+)?)*$"
+        },
+        {
+          "$comment": "Unrestricted boundaries.",
+          "const": "*"
+        }
+      ]
+    }
+  }
+}
